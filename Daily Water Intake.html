@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Water Intake Calculator</title>
+    <style>
+        :root {
+            --color-primary: #2080c0;
+            --color-primary-hover: #1d6fa6;
+            --color-background: #f5f5f5;
+            --color-surface: #ffffff;
+            --color-text: #333333;
+            --color-border: #dddddd;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --radius-base: 8px;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: var(--space-20);
+            font-family: var(--font-family);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--color-surface);
+            padding: var(--space-24);
+            border-radius: var(--radius-base);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 var(--space-24) 0;
+            font-size: 28px;
+            color: var(--color-primary);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-20);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: 14px;
+            font-family: var(--font-family);
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 36px;
+        }
+
+        input[type="number"] {
+            background-image: none;
+            padding-right: 12px;
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(32, 128, 192, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 150ms ease;
+            margin-top: var(--space-20);
+        }
+
+        .btn:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .result {
+            margin-top: var(--space-24);
+            padding: var(--space-16);
+            background-color: #e8f4f8;
+            border: 1px solid #b3d9e8;
+            border-radius: var(--radius-base);
+            text-align: center;
+            display: none;
+        }
+
+        .result.visible {
+            display: block;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .result-unit {
+            font-size: 18px;
+            color: #666666;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your daily water intake</h1>
+        
+        <form id="waterForm">
+            <div class="form-group">
+                <label for="units">Units</label>
+                <select id="units" required>
+                    <option value="">Select units</option>
+                    <option value="lb">Lb</option>
+                    <option value="kg">Kg</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Your weight</label>
+                <input type="number" id="weight" placeholder="Enter your weight" step="0.1" required>
+            </div>
+
+            <button type="submit" class="btn">Calculate!</button>
+        </form>
+
+        <div id="result" class="result">
+            <div class="result-label">Drink</div>
+            <div>
+                <span class="result-value" id="resultValue">0</span>
+                <span class="result-unit" id="resultUnit">oz</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('waterForm');
+        const unitsSelect = document.getElementById('units');
+        const weightInput = document.getElementById('weight');
+        const resultDiv = document.getElementById('result');
+        const resultValue = document.getElementById('resultValue');
+        const resultUnit = document.getElementById('resultUnit');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            calculateWaterIntake();
+        });
+
+        function calculateWaterIntake() {
+            const units = unitsSelect.value;
+            const weight = parseFloat(weightInput.value);
+
+            if (!units || !weight || weight <= 0) {
+                alert('Please enter valid weight and select units');
+                return;
+            }
+
+            let answer;
+            let unit;
+
+            if (units === 'lb') {
+                // Divide weight by 2 for ounces
+                answer = weight / 2;
+                unit = 'oz';
+            } else if (units === 'kg') {
+                // Convert kg to lb (1 kg = 2.20462 lb)
+                const weightInLb = weight * 2.20462;
+                // Divide by 2 to get ounces
+                const ounces = weightInLb / 2;
+                // Convert ounces to liters (1 liter = 33.814 oz)
+                answer = ounces / 33.814;
+                unit = 'Lt';
+            }
+
+            // Display result with appropriate precision
+            const displayValue = answer.toFixed(units === 'lb' ? 1 : 2);
+            resultValue.textContent = displayValue;
+            resultUnit.textContent = unit;
+            resultDiv.classList.add('visible');
+        }
+
+        // Allow Enter key to submit
+        weightInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
