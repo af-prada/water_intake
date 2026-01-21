@@ -147,6 +147,30 @@
             color: #666666;
             margin-left: 8px;
         }
+
+        .disclaimer {
+            margin-top: var(--space-24);
+            padding: var(--space-16);
+            background-color: #f9f9f9;
+            border-left: 3px solid #cccccc;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666666;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .disclaimer.visible {
+            display: block;
+        }
+
+        .disclaimer p {
+            margin: 0;
+        }
+
+        .disclaimer em {
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -178,6 +202,10 @@
                 <span class="result-unit" id="resultUnit">oz</span>
             </div>
         </div>
+
+        <div id="disclaimer" class="disclaimer">
+            <p>* DISCLAIMER: This is an approximate average estimate based on scientific literature (Stookey, J. D. (2019). Analysis of 2009–2012 Nutrition Health and Examination Survey (NHANES) Data to Estimate the Median Water Intake Associated with Meeting Hydration Criteria for Individuals Aged 12–80 Years in the US Population. <em>Nutrients</em>, 11(3), 657. https://doi.org/10.3390/nu11030657). For a more precise estimate, other variables should be taken into account depending on your age and physical activity.</p>
+        </div>
     </div>
 
     <script>
@@ -185,6 +213,7 @@
         const unitsSelect = document.getElementById('units');
         const weightInput = document.getElementById('weight');
         const resultDiv = document.getElementById('result');
+        const disclaimerDiv = document.getElementById('disclaimer');
         const resultValue = document.getElementById('resultValue');
         const resultUnit = document.getElementById('resultUnit');
 
@@ -206,24 +235,27 @@
             let unit;
 
             if (units === 'lb') {
-                // Divide weight by 2 for ounces
-                answer = weight / 3;
+                // Convert lb to kg (1 lb = 0.453592 kg)
+                const weightInKg = weight * 0.453592;
+                // Calculate volume in mL using 45 mL/kg
+                const volumeInMl = weightInKg * 45;
+                // Convert mL to ounces (1 oz = 29.5735 mL)
+                answer = volumeInMl / 29.5735;
                 unit = 'oz';
             } else if (units === 'kg') {
-                // Convert kg to lb (1 kg = 2.20462 lb)
-                const weightInLb = weight * 2.20462;
-                // Divide by 2 to get ounces
-                const ounces = weightInLb / 2;
-                // Convert ounces to liters (1 liter = 33.814 oz)
-                answer = ounces / 33.814;
+                // Calculate volume in mL using 45 mL/kg
+                const volumeInMl = weight * 45;
+                // Convert mL to liters (1 liter = 1000 mL)
+                answer = volumeInMl / 1000;
                 unit = 'Lt';
             }
 
-            // Display result with appropriate precision
+            // Display result with appropriate precision and disclaimer asterisk
             const displayValue = answer.toFixed(units === 'lb' ? 1 : 2);
-            resultValue.textContent = displayValue;
+            resultValue.textContent = displayValue + '*';
             resultUnit.textContent = unit;
             resultDiv.classList.add('visible');
+            disclaimerDiv.classList.add('visible');
         }
 
         // Allow Enter key to submit
