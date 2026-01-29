@@ -148,6 +148,17 @@
             margin-left: 8px;
         }
 
+        .logo-container {
+            text-align: center;
+            margin-bottom: var(--space-16);
+        }
+
+        .logo {
+            max-width: 200px;
+            height: auto;
+            border-radius: 50%;
+        }
+
         .disclaimer {
             margin-top: var(--space-24);
             padding: var(--space-16);
@@ -171,10 +182,21 @@
         .disclaimer em {
             font-style: italic;
         }
+
+        .citation {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 11px;
+            color: #888888;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="logo-container">
+            <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/7d5a9e83-f7e9-4104-bc90-8384322833b2" alt="Natural Hydration Science Logo" class="logo">
+        </div>
         <h1>Your daily water intake</h1>
         
         <form id="waterForm">
@@ -204,8 +226,8 @@
         </div>
 
         <div id="disclaimer" class="disclaimer">
-            <p>* DISCLAIMER: This is an approximate estimate based on the general U.S. population†. For a more precise amount, other variables should be taken into account such as on your age and physical activity.
-			†Stookey, J. D. (2019). Analysis of 2009–2012 Nutrition Health and Examination Survey (NHANES) Data to Estimate the Median Water Intake Associated with Meeting Hydration Criteria for Individuals Aged 12–80 Years in the US Population. <em>Nutrients</em>, 11(3), 657. https://doi.org/10.3390/nu11030657</p>
+            <p>* DISCLAIMER: This is an approximate estimate based on the general U.S. population<sup>†</sup>. For a more precise amount, other variables should be taken into account such as your age and physical activity.</p>
+            <p class="citation"><sup>†</sup> Stookey, J. D. (2019). Analysis of 2009–2012 Nutrition Health and Examination Survey (NHANES) Data to Estimate the Median Water Intake Associated with Meeting Hydration Criteria for Individuals Aged 12–80 Years in the US Population. <em>Nutrients</em>, 11(3), 657. https://doi.org/10.3390/nu11030657</p>
         </div>
     </div>
 
